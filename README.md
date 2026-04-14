@@ -27,19 +27,19 @@ None of this is in wolfSSH's ESP32 examples.  This component encodes all of it.
 
 ### 1. Add the component
 
-In your project's `main/idf_component.yml`, add a local path dependency during development:
+In your project's `main/idf_component.yml`:
+
+```yaml
+dependencies:
+  dmatking/esp-wolfssh-client: ">=0.1.0"
+```
+
+For local development, use a path dependency instead:
 
 ```yaml
 dependencies:
   esp-wolfssh-client:
     path: /path/to/esp-wolfssh-client
-```
-
-Or, once published to the ESP Component Registry:
-
-```yaml
-dependencies:
-  dmatking/esp-wolfssh-client: ">=0.1.0"
 ```
 
 ### 2. Initialize wolfSSH once at startup
@@ -110,10 +110,9 @@ Only one SSH session is active at a time.  `ssh_client_connect()` returns
 
 ## Bundled wolfssh
 
-[wolfSSH](https://github.com/wolfSSL/wolfssh) is not yet on the ESP Component Registry
-(as of April 2026).  A copy of v1.4.20 is bundled in `wolfssh/` (BSD-3 license).
-
-wolfSSL itself is declared as a registry dependency and pulled in automatically.
+A copy of [wolfSSH](https://github.com/wolfSSL/wolfssh) v1.4.20 is bundled in `wolfssh/`
+(BSD-3 license).  wolfSSL itself is declared as a registry dependency and pulled in
+automatically.
 
 ## License
 
