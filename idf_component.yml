@@ -1,8 +1,8 @@
 version: "0.1.0"
 description: >
   wolfSSH client component for ESP-IDF.  Wraps wolfSSH in a FreeRTOS task
-  with a clean callback API.  Ships with a pre-tuned user_settings.h and
-  a bundled copy of wolfssh (not yet on the ESP Component Registry).
+  with a clean callback API.  Ships with a pre-tuned user_settings.h for
+  ESP32 targets.
 
 url: https://github.com/dmatking/esp-wolfssh-client
 repository: https://github.com/dmatking/esp-wolfssh-client
@@ -13,5 +13,3 @@ maintainers:
 dependencies:
   idf: ">=5.4.0"
   wolfssl/wolfssl: ">=5.7.0"
-  # wolfssh is bundled in the wolfssh/ subdirectory.
-  # It is not on the ESP Component Registry as of 2026-04.
