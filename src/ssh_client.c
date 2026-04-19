@@ -233,6 +233,16 @@ static void session_task(void *arg)
     }
     ESP_LOGI(TAG, "connected");
 
+    // The connect timeout was needed for handshake only — clear it so the
+    // session read loop blocks indefinitely (matches old inline ssh_term.c
+    // behaviour; leaving SO_RCVTIMEO active causes spurious disconnects when
+    // the server goes quiet for > timeout_ms).
+    {
+        struct timeval tv_zero = {0};
+        setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv_zero, sizeof(tv_zero));
+        setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &tv_zero, sizeof(tv_zero));
+    }
+
     // Set PTY dimensions (window-change request immediately after connect).
     // wolfSSH_ChangeTerminalSize requires WOLFSSH_TERM && !NO_FILESYSTEM.
 #if defined(WOLFSSH_TERM) && !defined(NO_FILESYSTEM)
