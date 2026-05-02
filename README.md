@@ -11,7 +11,8 @@ Getting wolfSSH working on ESP32/FreeRTOS requires:
 - A `user_settings.h` for wolfSSL with the SSH-specific settings enabled:
   `WOLFSSH_TERM` for PTY support, `NO_TERMIOS` (no `tcgetattr` on FreeRTOS),
   and a reduced `DEFAULT_WINDOW_SZ` for embedded RAM.
-- A non-obvious threading model: wolfSSH blocks; keystrokes need a thread-safe queue.
+- A single-task I/O model: all wolfSSH calls run in one FreeRTOS task; keystrokes
+  from other tasks arrive via a thread-safe queue.
 - A specific session setup sequence: connect → channel open → PTY request → shell request
   → read/write loop.
 
@@ -75,7 +76,7 @@ ssh_client_config_t cfg = {
         .on_disconnected = on_disconnected,
     },
 };
-ssh_client_connect(&cfg);
+ESP_ERROR_CHECK(ssh_client_connect(&cfg));
 ```
 
 ### 4. Send keystrokes
@@ -119,7 +120,7 @@ static bool my_host_key_check(const uint8_t *key, size_t len, void *ctx)
 {
     // Compare key/len against a pinned fingerprint or a stored known-hosts entry.
     // Return true to accept, false to abort the connection.
-    return check_known_host(key, len);
+    return true;  // replace with your actual check
 }
 
 ssh_client_config_t cfg = {
