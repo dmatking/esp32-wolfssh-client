@@ -8,8 +8,9 @@ run correctly on ESP32 targets — is done for you.
 
 Getting wolfSSH working on ESP32/FreeRTOS requires:
 
-- A carefully tuned `user_settings.h` for wolfSSL (wrong settings → compile errors or
-  silent runtime failures).
+- A `user_settings.h` for wolfSSL with the SSH-specific settings enabled:
+  `WOLFSSH_TERM` for PTY support, `NO_TERMIOS` (no `tcgetattr` on FreeRTOS),
+  and a reduced `DEFAULT_WINDOW_SZ` for embedded RAM.
 - A non-obvious threading model: wolfSSH blocks; keystrokes need a thread-safe queue.
 - A specific session setup sequence: connect → channel open → PTY request → shell request
   → read/write loop.
