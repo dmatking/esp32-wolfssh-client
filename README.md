@@ -102,6 +102,41 @@ bool      ssh_client_is_connected(void);
 
 See `include/esp_wolfssh_client.h` for full documentation.
 
+## Security
+
+### Host-key verification
+
+By default, the component accepts any server host key.  This is convenient for
+LAN-only embedded terminals connecting to a known device, but it means a
+man-in-the-middle on the network path can silently intercept the session —
+credentials, keystrokes, and output — without any indication to the application.
+
+To verify the server's identity, implement `on_host_key` in your callbacks:
+
+```c
+static bool my_host_key_check(const uint8_t *key, size_t len, void *ctx)
+{
+    // Compare key/len against a pinned fingerprint or a stored known-hosts entry.
+    // Return true to accept, false to abort the connection.
+    return check_known_host(key, len);
+}
+
+ssh_client_config_t cfg = {
+    ...
+    .callbacks = {
+        .on_host_key = my_host_key_check,
+        ...
+    },
+};
+```
+
+The raw key bytes are passed as-is from wolfSSH's host-key exchange.  The
+application is responsible for pinning, TOFU (trust-on-first-use), or
+known-hosts comparison — the component deliberately avoids NVS host-key storage
+since that schema is application-specific.
+
+If `on_host_key` is NULL (the default), all host keys are accepted.
+
 ## Multi-session note
 
 Only one SSH session is active at a time.  `ssh_client_connect()` returns

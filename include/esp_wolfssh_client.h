@@ -26,6 +26,13 @@ typedef struct {
      * @param reason  0 = normal close, negative = wolfSSH error code
      */
     void (*on_disconnected)(int reason, void *ctx);
+    /**
+     * Called once during the SSH handshake with the server's raw host key.
+     * Return true to accept the key and continue, false to abort.
+     * If NULL, all server host keys are accepted without verification —
+     * the connection is vulnerable to MITM on untrusted networks.
+     */
+    bool (*on_host_key)(const uint8_t *key, size_t len, void *ctx);
     /** Passed as the last argument to every callback. */
     void *ctx;
 } ssh_client_callbacks_t;
